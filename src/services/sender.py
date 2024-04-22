@@ -1,17 +1,11 @@
 import asyncio
-import time
 from email.message import EmailMessage
-
-from selenium.webdriver import Proxy
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.proxy import ProxyType
 
 from src.config import settings
 import smtplib
 from src.db.db import database
 
 from pyrogram import Client
-from selenium import webdriver
 
 from src.services.operations import create_message
 
@@ -41,12 +35,11 @@ async def send_telegram(text, time_sleep, user_ip):
     users = database[user_ip]
     await asyncio.sleep(time_sleep)
 
-    async with Client(name="ChatBot", api_id=settings.API_ID, api_hash=settings.API_HASH) as client:
+    async with Client(name="botchat", api_id=settings.API_ID, api_hash=settings.API_HASH) as client:
         for info in users:
             try:
                 message = await create_message(info[0], text)
-                await client.send_message(chat_id=info[1], text=f"Привет {info[0]} "
-                                                                f"\n{message}")
+                await client.send_message(chat_id=info[1], text=message)
                 await asyncio.sleep(1)
             except Exception as ex:
                 print(f"Ошибка отправки на телеграм {info[1]}")

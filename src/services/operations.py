@@ -23,6 +23,6 @@ async def convert_time(time):
 
 
 async def create_message(name, message):
-    text = (f"Hello {name} \t"
-            f"{message}")
+    text = (f"Hello {name}"
+            f"\n{message}")
     return text

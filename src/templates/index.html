@@ -59,40 +59,24 @@
             display: none;
         }
 
-        #error-message {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ff6666; /* Цвет фона */
-            color: #ffffff; /* Цвет текста */
-            padding: 10px;
-            box-sizing: border-box;
-            z-index: 1000; /* Устанавливаем z-index, чтобы сообщение было поверх других элементов */
-            display: none; /* По умолчанию скрываем блок */
-        }
-
-        #error-message.show {
-            display: block; /* Показываем блок, если есть сообщение об ошибке */
-        }
     </style>
 </head>
 <body>
+<div id="error-message"></div>
 <div class="container">
     <div class="header">
         <h1>Рассылка Today</h1>
     </div>
-    <div id="error-message"></div>
     <div class="contact-info">
         <h3>Выберите канал для рассылки</h3>
         <label for="email">Email</label>
         <input type="radio" id="email" name="channel" value="email">
         <label for="telegram">Telegram</label>
         <input type="radio" id="telegram" name="channel" value="telegram">
-<!--        <label for="instagram">Instagram</label>-->
-<!--        <input type="radio" id="instagram" name="channel" value="instagram">-->
-<!--        <label for="whatsapp">WhatsApp</label>-->
-<!--        <input type="radio" id="whatsapp" name="channel" value="whatsapp">-->
+        <!--        <label for="instagram">Instagram</label>-->
+        <!--        <input type="radio" id="instagram" name="channel" value="instagram">-->
+        <!--        <label for="whatsapp">WhatsApp</label>-->
+        <!--        <input type="radio" id="whatsapp" name="channel" value="whatsapp">-->
         <label for="sms">Sms</label>
         <input type="radio" id="sms" name="channel" value="sms">
     </div>
@@ -140,12 +124,34 @@
 </script>
 
 <script>
+
+    function showMessage(message) {
+        const errorMessageElement = document.getElementById('error-message');
+        errorMessageElement.textContent = message;
+
+        // Показываем сообщение
+        errorMessageElement.style.display = 'block';
+
+        // Задержка в 3 секунды перед удалением сообщения
+        setTimeout(function () {
+            hideMessage();
+        }, 3000);
+    }
+
+    function hideMessage() {
+        const errorMessageElement = document.getElementById('error-message');
+        errorMessageElement.textContent = '';
+        errorMessageElement.style.display = 'none';
+    }
+
+
     async function uploadFile() {
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
 
         if (!file) {
             console.error('No file selected');
+            showMessage('No file selected')
             return;
         }
 
@@ -168,6 +174,7 @@
             resultElement.textContent = `Найдено пользователей: ${data}`; // Обновляем содержимое элемента с результатом
         } catch (error) {
             console.error('Error:', error);
+            showMessage('Произошла ошибка: ' + error.message);
         }
     }
 </script>
@@ -211,6 +218,7 @@
         };
 
         // Отправляем данные на сервер
+        showMessage('Рассылка отправлена')
         try {
             const response = await fetch('/receive', {
                 method: 'POST',
@@ -224,11 +232,10 @@
                 throw new Error('Network response was not ok');
             }
 
-            // Получаем ответ от сервера в формате JSON
-            const responseData = await response.json();
 
         } catch (error) {
             console.error('There was an error with the request:', error);
+            showMessage('There was an error with the request:', error)
         }
     });
 </script>
