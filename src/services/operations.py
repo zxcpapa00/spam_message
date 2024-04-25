@@ -11,7 +11,7 @@ async def check_file(file, user_ip):
     csv_reader = csv.reader(csv_stream, delimiter=";")
 
     csv_contents = [row for row in csv_reader]
-    database[user_ip] = csv_contents[1:]
+    database[user_ip]["users"] = csv_contents[1:]
     return len(csv_contents[1:])
 
 

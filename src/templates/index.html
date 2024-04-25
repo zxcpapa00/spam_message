@@ -1,73 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рассылка Today</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .contact-info {
-            background-color: #f2f2f2;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .contact-info h3 {
-            margin-top: 0;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-
-        .form-group button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        #subject-group {
-            display: none;
-        }
-
-    </style>
-</head>
+{% extends "base.html" %}
+{% block content %}
 <body>
 <div id="error-message"></div>
 <div class="container">
-    <div class="header">
-        <h1>Рассылка Today</h1>
-    </div>
     <div class="contact-info">
+        <div class="form-group">
+            <a href="/data" class="main-menu">Изменить данные</a>
+        </div>
         <h3>Выберите канал для рассылки</h3>
         <label for="email">Email</label>
         <input type="radio" id="email" name="channel" value="email">
@@ -102,6 +41,11 @@
     </div>
 </div>
 </body>
+<script>
+    // Добавляем placeholder "default" над полями Email и Telegram
+    document.getElementById('email').placeholder = 'default';
+    document.getElementById('telegram').placeholder = 'default';
+</script>
 <script>
     // Получаем чекбокс "Email"
     const emailCheckbox = document.getElementById('email');
@@ -240,4 +184,6 @@
     });
 </script>
 
-</html>
+{% endblock %}
+
+

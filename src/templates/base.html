@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Рассылка Today{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: palevioletred;
+        }
+
+        .contact-info {
+            background-color: #f2f2f2;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .contact-info h3 {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="text"]::placeholder,
+        .form-group input[type="email"]::placeholder,
+        .form-group textarea::placeholder {
+            color: #aaa;
+            font-size: 0.8em;
+        }
+
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #subject-group {
+            display: none;
+        }
+
+        .default-text {
+            color: #aaa;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="error-message"></div>
+<div class="container">
+    <div class="header">
+        <h1>{% block heading %}Рассылка Today{% endblock %}</h1>
+    </div>
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>
