@@ -1,6 +1,8 @@
 import asyncio
 from email.message import EmailMessage
 
+from fastapi import HTTPException, status
+
 from src.config import settings
 import smtplib
 from src.db.db import database
@@ -16,23 +18,32 @@ async def send_email(subject, text, time_sleep, user_ip):
         users = user.get("users")
         await asyncio.sleep(time_sleep)
         with smtplib.SMTP_SSL(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+
             if user.get("email") and user.get("app_pass"):
-                server.login(user.get("email"), user.get("app_pass"))
+                try:
+                    server.login(user.get("email"), user.get("app_pass"))
+                except Exception as e:
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                        detail="Не правильно заданы email или пароль приложения")
             else:
                 server.login(settings.SMTP_USER, settings.SMTP_PASS)
             for info in users:
                 email = EmailMessage()
-                email["From"] = settings.SMTP_USER
-                email["To"] = info[1]
-                email["Subject"] = subject
+                email["From"] = settings.SMTP_USER if not (user.get("email") and user.get("app_pass")) else user.get(
+                    "email")
+                if info:
+                    email["To"] = info[0]
+                    email["Subject"] = subject
 
-                message = await create_message(info[0], text)
-                email.set_content(message)
+                    message = await create_message(text)
+                    email.set_content(message)
+                else:
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Не правильно заданы данные")
                 try:
                     server.send_message(email)
                     await asyncio.sleep(1)
                 except Exception as ex:
-                    print(f"Ошибка отправки email на {info[1]}")
+                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка отправки email")
 
 
 async def send_telegram(text, time_sleep, user_ip):
@@ -40,15 +51,27 @@ async def send_telegram(text, time_sleep, user_ip):
     if user:
         users = user.get("users")
         await asyncio.sleep(time_sleep)
-
-        async with Client(name="botchat", api_id=settings.API_ID, api_hash=settings.API_HASH) as client:
-            for info in users:
-                try:
-                    message = await create_message(info[0], text)
-                    await client.send_message(chat_id=info[1], text=message)
-                    await asyncio.sleep(1)
-                except Exception as ex:
-                    print(f"Ошибка отправки на телеграм {info[1]}")
+        api_id = user.get("api_id")
+        api_hash = user.get("api_hash")
+        phone = user.get("telegram")
+        if api_id and api_hash and phone:
+            async with Client(name=str(api_id), api_id=api_id, api_hash=api_hash, phone_number=phone) as client:
+                for info in users:
+                    try:
+                        message = await create_message(text)
+                        await client.send_message(chat_id=info[0], text=message)
+                        await asyncio.sleep(1)
+                    except Exception as ex:
+                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка отправки телеграм")
+        else:
+            async with Client(name="botchat", api_id=settings.API_ID, api_hash=settings.API_HASH) as client:
+                for info in users:
+                    try:
+                        message = await create_message(text)
+                        await client.send_message(chat_id=info[0], text=message)
+                        await asyncio.sleep(1)
+                    except Exception as ex:
+                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка отправки телеграм")
 
 
 async def send_insta(message, time_sleep, user_ip):
@@ -85,9 +108,8 @@ async def send_sms(text, time_sleep, user_ip):
         for info in users:
             params = {
                 'project': 'sendersmser',
-                'recipients': f'{info[1]}',
-                'message': f'Привет {info[0]} '
-                           f'\n{text}',
+                'recipients': info[0],
+                'message': text,
                 'apikey': '133deb0cbe5368f892b4a80c8cdd3306'
             }
 

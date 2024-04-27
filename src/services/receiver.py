@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile, Request
 
 from src.db.db import database
 from src.models.data import Data
-from src.services.data_reset import reset_email
+from src.services.data_reset import reset_email, reset_telegram, get_phone_code
 from src.services.operations import check_file, convert_time
 from src.services.sender import send_email, send_telegram, send_sms, send_insta, send_whatsapp
 
@@ -29,6 +29,19 @@ async def get_data(data: Data, request: Request):
 async def res_email(request: Request):
     data = await request.json()
     await reset_email(data.get("email"), data.get("app_pass"), request.client.host)
+
+
+@router.post('/res_telegram')
+async def res_telegram(request: Request):
+    data = await request.json()
+    await reset_telegram(data.get("phone"), data.get("api_id"), data.get("api_hash"), data.get("code_"),
+                         request.client.host)
+
+
+@router.post('/get_code')
+async def get_code(request: Request):
+    data = await request.json()
+    await get_phone_code(data.get("phone"), data.get("api_id"), data.get("api_hash"), request.client.host)
 
 
 @router.post('/upload')

@@ -42,25 +42,17 @@
 </div>
 </body>
 <script>
-    // Добавляем placeholder "default" над полями Email и Telegram
-    document.getElementById('email').placeholder = 'default';
-    document.getElementById('telegram').placeholder = 'default';
-</script>
-<script>
-    // Получаем чекбокс "Email"
     const emailCheckbox = document.getElementById('email');
-    // Получаем поле "Тема сообщения"
     const subjectGroup = document.getElementById('subject-group');
 
-    // Добавляем обработчик событий на изменение состояния всех чекбоксов
     document.querySelectorAll('input[type="radio"][name="channel"]').forEach(checkbox => {
         checkbox.addEventListener('change', () => {
-            // Если выбран чекбокс "Email"
+
             if (emailCheckbox.checked) {
-                // Показываем поле "Тема сообщения"
+
                 subjectGroup.style.display = 'block';
             } else {
-                // Скрываем поле "Тема сообщения"
+
                 subjectGroup.style.display = 'none';
             }
         });
@@ -73,10 +65,8 @@
         const errorMessageElement = document.getElementById('error-message');
         errorMessageElement.textContent = message;
 
-        // Показываем сообщение
         errorMessageElement.style.display = 'block';
 
-        // Задержка в 3 секунды перед удалением сообщения
         setTimeout(function () {
             hideMessage();
         }, 3000);
@@ -112,10 +102,10 @@
                 throw new Error('Error uploading file');
             }
 
-            const data = await response.json(); // Извлекаем JSON из ответа
+            const data = await response.json();
 
             const resultElement = document.getElementById('result');
-            resultElement.textContent = `Найдено пользователей: ${data}`; // Обновляем содержимое элемента с результатом
+            resultElement.textContent = `Найдено пользователей: ${data}`;
         } catch (error) {
             console.error('Error:', error);
             showMessage('Произошла ошибка: ' + error.message);
@@ -123,37 +113,29 @@
     }
 </script>
 <script>
-    const currentDateTime = new Date().toISOString().slice(0, 16); // Формат YYYY-MM-DDTHH:MM
+    const currentDateTime = new Date().toISOString().slice(0, 16);
 
-    // Устанавливаем минимальное значение для поля выбора даты и времени
     document.getElementById("datetime").min = currentDateTime;
 
-    // Добавляем обработчик события на изменение значения поля
     document.getElementById("datetime").addEventListener("input", function () {
         const selectedDateTime = this.value;
 
-        // Проверяем, если пользователь не указал дату и время
         if (!selectedDateTime) {
-            // Устанавливаем выбранную дату и время равной текущей дате и времени
             this.value = currentDateTime;
         }
     });
 
     document.querySelector('button[type="submit"]').addEventListener('click', async () => {
-        // Получаем выбранный канал для рассылки
         const channel = document.querySelector('input[type="radio"][name="channel"]:checked').value;
 
-        // Получаем значение темы сообщения, если канал "Email" выбран
         let subject = '';
         if (channel === 'email') {
             subject = document.getElementById('subject').value;
         }
 
-        // Получаем остальные данные из формы
         const message = document.getElementById('message').value;
         const datetime = document.getElementById('datetime').value;
 
-        // Создаем объект данных для отправки
         const data = {
             channel,
             subject,
@@ -161,8 +143,7 @@
             datetime
         };
 
-        // Отправляем данные на сервер
-        showMessage('Рассылка отправлена')
+        showMessage('В обработке')
         try {
             const response = await fetch('/receive', {
                 method: 'POST',
@@ -173,13 +154,16 @@
             });
 
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error('Ошибка HTTP: ' + response.status);
             }
 
+            const responseData = await response.json();
+            console.log(responseData);
+            showMessage('Данные успешно отправлены');
 
         } catch (error) {
-            console.error('There was an error with the request:', error);
-            showMessage('There was an error with the request:', error)
+            console.error('Произошла ошибка:', error);
+            showMessage('Произошла ошибка при отправке данных');
         }
     });
 </script>

@@ -2,11 +2,11 @@
 
 {% block content %}
 <div class="form-group">
-    <a href="/" class="main-menu" text>Главное меню</a>
+    <a href="/" class="main-menu">Главное меню</a>
 </div>
 <div class="contact-info">
     <p>Email - {{ user_email }}</p>
-<!--    <p>Telegram - {{ user_telegram }}</p>-->
+    <p>Telegram - {{ user_telegram }}</p>
 </div>
 
 <div class="contact-info">
@@ -16,18 +16,37 @@
         <input type="email" id="email" name="email" placeholder="Введите email">
         <label for="pass">Пароль приложения</label>
         <input type="email" id="pass" name="pass" placeholder="Введите пароль приложения">
+        <br>
+        <br>
         <button id="change-email">Изменить</button>
     </div>
+</div>
+
+<div class="contact-info">
+    <h3>Редактировать настройки telegram</h3>
+    <div class="form-group inline-form">
+        <label for="phone">Номер телефона</label>
+        <input type="tel" id="phone" name="phone" placeholder="Введите номер. +7...">
+        <label for="api_id">Api ID</label>
+        <input type="text" id="api_id" name="api_id" placeholder="Введите api id">
+        <label for="api_hash">Api Hash</label>
+        <input type="text" id="api_hash" name="api_hash" placeholder="Введите api hash">
+        <label for="auth_code">Auth code</label>
+        <input type="text" id="auth_code" name="auth_code" placeholder="Введите полученный код">
+        <button id="get-code">Получить код</button>
+        <br>
+        <button id="change-telegram">Изменить</button>
+    </div>
+
 </div>
 
 
 <script>
     document.getElementById("change-email").addEventListener("click", function () {
-        // Получаем значения email и пароля приложения из формы
+
         const emailValue = document.getElementById("email").value;
         const passValue = document.getElementById("pass").value;
 
-        // Создаем объект с данными для запроса
         const requestData = {
             email: emailValue,
             app_pass: passValue
@@ -47,9 +66,86 @@
             .then(response => {
                 if (response.ok) {
                     console.log('Запрос выполнен успешно');
-                    // Добавьте здесь код для обработки ответа, если нужно
+
                 } else {
                     console.error('Ошибка при выполнении запроса:', response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Произошла ошибка:', error);
+            });
+    });
+</script>
+
+<script>
+    document.getElementById("change-telegram").addEventListener("click", function () {
+
+        const phone = document.getElementById("phone").value;
+        const api_id = document.getElementById("api_id").value;
+        const api_hash = document.getElementById("api_hash").value;
+        const auth_code = document.getElementById("auth_code").value;
+
+        const requestData = {
+            phone: phone,
+            api_id: api_id,
+            api_hash: api_hash,
+            code_: auth_code
+
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        };
+
+        // Выполняем запрос
+        fetch('/receive/res_telegram', requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    console.log('Запрос выполнен успешно');
+
+                } else {
+                    console.error('Ошибка при выполнении запроса:', response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Произошла ошибка:', error);
+            });
+    });
+</script>
+
+<script>
+    document.getElementById("get-code").addEventListener("click", function () {
+
+        const phone = document.getElementById("phone").value;
+        const api_id = document.getElementById("api_id").value;
+        const api_hash = document.getElementById("api_hash").value;
+
+        const requestData = {
+            phone: phone,
+            api_id: api_id,
+            api_hash: api_hash
+        };
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        };
+
+        // Выполняем запрос
+        fetch('/receive/get_code', requestOptions)
+            .then(response => {
+                if (response.ok) {
+                    showMessage("Данные изменены, обновите страницу")
+
+                } else {
+                    showMessage("Неверно заданы данные")
                 }
             })
             .catch(error => {

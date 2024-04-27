@@ -19,12 +19,13 @@ def get_index_page(request: Request):
 @router.get("/data")
 def reset_data(request: Request):
     user_data = database.get(request.client.host)
-    if user_data:
+    user_email = "default"
+    user_telegram = "default"
+    if user_data.get("email"):
         user_email = user_data.get("email")
+    if user_data.get("telegram"):
         user_telegram = user_data.get("telegram")
-    else:
-        user_email = "default"
-        user_telegram = "default"
+
     return templates.TemplateResponse("reset_data.html",
                                       {"request": request, "user_email": user_email, "user_telegram": user_telegram}
                                       )
