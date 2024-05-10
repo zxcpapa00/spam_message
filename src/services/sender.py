@@ -27,7 +27,7 @@ async def send_email(subject, text, time_sleep, user_ip):
                                         detail="Не правильно заданы email или пароль приложения")
             else:
                 server.login(settings.SMTP_USER, settings.SMTP_PASS)
-            for info in users:
+            async for info in users:
                 email = EmailMessage()
                 email["From"] = settings.SMTP_USER if not (user.get("email") and user.get("app_pass")) else user.get(
                     "email")
@@ -43,7 +43,7 @@ async def send_email(subject, text, time_sleep, user_ip):
                     server.send_message(email)
                     await asyncio.sleep(1)
                 except Exception as ex:
-                    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка отправки email")
+                    pass
 
 
 async def send_telegram(text, time_sleep, user_ip):
@@ -56,22 +56,22 @@ async def send_telegram(text, time_sleep, user_ip):
         phone = user.get("telegram")
         if api_id and api_hash and phone:
             async with Client(name=str(api_id), api_id=api_id, api_hash=api_hash, phone_number=phone) as client:
-                for info in users:
+                async for info in users:
                     try:
                         message = await create_message(text)
                         await client.send_message(chat_id=info[0], text=message)
                         await asyncio.sleep(1)
                     except Exception as ex:
-                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка отправки телеграм")
+                        pass
         else:
             async with Client(name="botchat", api_id=settings.API_ID, api_hash=settings.API_HASH) as client:
-                for info in users:
+                async for info in users:
                     try:
                         message = await create_message(text)
                         await client.send_message(chat_id=info[0], text=message)
                         await asyncio.sleep(1)
                     except Exception as ex:
-                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ошибка отправки телеграм")
+                        pass
 
 
 async def send_insta(message, time_sleep, user_ip):
