@@ -41,8 +41,9 @@ async def send_email(subject, text, time_sleep, user_ip):
                     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Не правильно заданы данные")
                 try:
                     server.send_message(email)
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(4)
                 except Exception as ex:
+                    print(ex)
                     pass
 
 
@@ -60,8 +61,9 @@ async def send_telegram(text, time_sleep, user_ip):
                     try:
                         message = await create_message(text)
                         await client.send_message(chat_id=info[0], text=message)
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(4)
                     except Exception as ex:
+                        print(ex)
                         pass
         else:
             async with Client(name="botchat", api_id=settings.API_ID, api_hash=settings.API_HASH) as client:
@@ -69,8 +71,9 @@ async def send_telegram(text, time_sleep, user_ip):
                     try:
                         message = await create_message(text)
                         await client.send_message(chat_id=info[0], text=message)
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(4)
                     except Exception as ex:
+                        print(ex)
                         pass
 
 
