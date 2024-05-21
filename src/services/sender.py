@@ -43,7 +43,7 @@ async def send_email(subject, text, time_sleep, user_ip):
                     server.send_message(email)
                     await asyncio.sleep(4)
                 except Exception as ex:
-                    print(ex)
+                    print(f"Сообщение не было отправлено пользователю {info[0]}")
                     pass
 
 
@@ -63,7 +63,7 @@ async def send_telegram(text, time_sleep, user_ip):
                         await client.send_message(chat_id=info[0], text=message)
                         await asyncio.sleep(4)
                     except Exception as ex:
-                        print(ex)
+                        print(f"Сообщение не было отправлено пользователю {info[0]}")
                         pass
         else:
             async with Client(name="botchat", api_id=settings.API_ID, api_hash=settings.API_HASH) as client:
@@ -73,27 +73,12 @@ async def send_telegram(text, time_sleep, user_ip):
                         await client.send_message(chat_id=info[0], text=message)
                         await asyncio.sleep(4)
                     except Exception as ex:
-                        print(ex)
+                        print(f"Сообщение не было отправлено пользователю {info[0]}")
                         pass
 
 
 async def send_insta(message, time_sleep, user_ip):
     pass
-    # proxy_host = "38.152.247.115"
-    # proxy_port = "9534"
-    # proxy = Proxy()
-    # proxy.proxy_type = ProxyType.MANUAL
-    # proxy.http_proxy = f"{proxy_host}:{proxy_port}"
-    # proxy.ssl_proxy = f"{proxy_host}:{proxy_port}"
-    #
-    # # Настройка параметров запуска Chrome
-    # chrome_options = Options()
-    # chrome_options.add_argument('--ignore-certificate-errors')
-    # chrome_options.add_argument('--ignore-ssl-errors')
-    # chrome_options.add_argument('--proxy-server=http://{}:{}'.format(proxy_host, proxy_port))
-    # driver = webdriver.Chrome(options=chrome_options)
-    # driver.get("https://www.instagram.com")
-    # time.sleep(50)
 
 
 async def send_whatsapp(message, time_sleep, user_ip):
